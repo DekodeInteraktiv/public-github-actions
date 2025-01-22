@@ -1,0 +1,81 @@
+name: Manually deploy to server
+
+on:
+    workflow_call:
+        inputs:
+            TAG:
+                description: 'Version to deploy, can be a tag, branch, commit or empty for latest'
+                required: false
+                type: string
+                default: ''
+            PHP_VERSION:
+                description: 'The PHP version to use'
+                required: false
+                type: string
+                default: '8.2'
+            BUILD_FOR_DEPLOY:
+                description: 'Whether to build for deployment immediately or to keep developer tools'
+                required: false
+                type: boolean
+                default: false
+            ARTIFACT_NAME:
+                description: 'The artifact to deploy'
+                required: false
+                type: string
+                default: 'compressed-code-artifact'
+            RSYNC_FILTER_FILE:
+                description: 'Path to the rsync filter file'
+                required: false
+                type: string
+                default: './tools/github/rsync-file-filter.rules'
+        secrets:
+            SERVER_USERNAME:
+                description: 'Username for the server'
+                required: true
+            SERVER_HOSTNAME:
+                description: 'Hostname for the server'
+                required: true
+            DEPLOYMENT_PATH:
+                description: 'Path to deploy to on the server'
+                required: true
+            SERVER_PRIVATE_KEY:
+                description: 'Private key for the server'
+                required: true
+            SERVER_HOSTKEY:
+                description: 'The SSH host key of the SERVER_HOSTNAME'
+                required: true
+
+jobs:
+    code-checkout:
+        uses: ./.github/workflows/checkout-and-build.yml
+        with:
+            tag: ${{ inputs.TAG }}
+            PHP_VERSION: ${{ inputs.PHP_VERSION }}
+            BUILD_FOR_DEPLOY: ${{ inputs.BUILD_FOR_DEPLOY }}
+            ARTIFACT_NAME: ${{ inputs.ARTIFACT_NAME }}
+        secrets: inherit
+
+    deploy:
+        uses: 'dekodeinteraktiv/github-actions/.github/workflows/deploy-to-server.yml@feature/update-download-artifact'
+        needs: [code-checkout]
+        with:
+            ARTIFACT_NAME: ${{ inputs.ARTIFACT_NAME }}
+            RSYNC_FILTER_FILE: ${{ inputs.RSYNC_FILTER_FILE }}
+        secrets:
+            SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+            SERVER_HOSTNAME: ${{ secrets.SERVER_HOSTNAME }}
+            DEPLOYMENT_PATH: ${{ secrets.DEPLOYMENT_PATH }}
+            SERVER_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }}
+            SERVER_HOSTKEY: ${{ secrets.SERVER_HOSTKEY }}
+
+    cleanup:
+        runs-on: ubuntu-latest
+        needs: [deploy]
+
+        steps:
+            # Delete artifacts after use.
+            - uses: geekyeggo/delete-artifact@v5
+              with:
+                  failOnError: false
+                  name: 'compressed-code-artifact'
+                  useGlob: false
