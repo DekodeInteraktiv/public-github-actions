@@ -12,6 +12,10 @@ on:
                 description: 'The PHP version to use'
                 required: false
                 type: string
+            DEFAULT_PHP_VERSION:
+                description: 'The fallback PHP version to use'
+                required: false
+                type: string
                 default: '8.2'
             BUILD_FOR_DEPLOY:
                 description: 'Whether to build for deployment immediately or to keep developer tools'
@@ -37,9 +41,19 @@ jobs:
             - name: Read PHP version from composer.json (with fallback)
               id: php-version
               run: |
-                if ! command -v "jq" &> /dev/null; then
+                if [ -n "${{ inputs.PHP_VERSION }}" ]; then
                   echo "PHP_VERSION=${{ inputs.PHP_VERSION }}" >> $GITHUB_ENV
-                  exit 1
+                  exit 0
+                fi
+
+                if [ ! -f composer.json ]; then
+                  echo "PHP_VERSION=${{ inputs.DEFAULT_PHP_VERSION }}" >> $GITHUB_ENV
+                  exit 0
+                fi
+
+                if ! command -v "jq" &> /dev/null; then
+                  echo "PHP_VERSION=${{ inputs.DEFAULT_PHP_VERSION }}" >> $GITHUB_ENV
+                  exit 0
                 fi
 
                 # Try to extract PHP version from composer.json
@@ -47,7 +61,7 @@ jobs:
                 
                 # Use a fallback version if not defined
                 if [ -z "$php_version" ]; then
-                  php_version=${{ inputs.PHP_VERSION }}
+                  php_version=${{ inputs.DEFAULT_PHP_VERSION }}
                 fi
 
                 echo "PHP_VERSION=${php_version}" >> $GITHUB_ENV
