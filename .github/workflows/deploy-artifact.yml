@@ -12,6 +12,10 @@ on:
                 description: 'The PHP version to use'
                 required: false
                 type: string
+            DEFAULT_PHP_VERSION:
+                description: 'The fallback PHP version to use'
+                required: false
+                type: string
                 default: '8.2'
             BUILD_FOR_DEPLOY:
                 description: 'Whether to build for deployment immediately or to keep developer tools'
@@ -51,6 +55,7 @@ jobs:
         with:
             tag: ${{ inputs.TAG }}
             PHP_VERSION: ${{ inputs.PHP_VERSION }}
+            DEFAULT_PHP_VERSION: ${{ inputs.DEFAULT_PHP_VERSION }}
             BUILD_FOR_DEPLOY: ${{ inputs.BUILD_FOR_DEPLOY }}
             ARTIFACT_NAME: ${{ inputs.ARTIFACT_NAME }}
         secrets: inherit
