@@ -53,7 +53,7 @@ jobs:
     code-checkout:
         uses: ./.github/workflows/checkout-and-build.yml
         with:
-            tag: ${{ inputs.TAG }}
+            TAG: ${{ inputs.TAG }}
             PHP_VERSION: ${{ inputs.PHP_VERSION }}
             DEFAULT_PHP_VERSION: ${{ inputs.DEFAULT_PHP_VERSION }}
             BUILD_FOR_DEPLOY: ${{ inputs.BUILD_FOR_DEPLOY }}
