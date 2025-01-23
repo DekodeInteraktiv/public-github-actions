@@ -48,6 +48,9 @@ on:
             SERVER_HOSTKEY:
                 description: 'The SSH host key of the SERVER_HOSTNAME'
                 required: true
+            COMPOSER_AUTH:
+                description: 'The composer auth'
+                required: false
 
 jobs:
     code-checkout:
