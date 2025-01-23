@@ -10,7 +10,7 @@ on:
                 default: ''
             PHP_VERSION:
                 description: 'The PHP version to use'
-                required: true
+                required: false
                 type: string
                 default: '8.2'
             BUILD_FOR_DEPLOY:
