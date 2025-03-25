@@ -64,7 +64,7 @@ jobs:
         secrets: inherit
 
     deploy:
-        uses: 'dekodeinteraktiv/github-actions/.github/workflows/deploy-to-server.yml@feature/update-download-artifact'
+        uses: 'dekodeinteraktiv/github-actions/.github/workflows/deploy-to-server.yml@main'
         needs: [code-checkout]
         with:
             ARTIFACT_NAME: ${{ inputs.ARTIFACT_NAME }}
