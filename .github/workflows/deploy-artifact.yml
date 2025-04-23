@@ -32,6 +32,11 @@ on:
                 required: false
                 type: string
                 default: './tools/github/rsync-file-filter.rules'
+            RUNS_ON:
+                description: 'Runner type to use (e.g., ubuntu-latest or self-hosted)'
+                required: false
+                type: string
+                default: 'ubuntu-latest'
         secrets:
             SERVER_USERNAME:
                 description: 'Username for the server'
@@ -69,6 +74,7 @@ jobs:
         with:
             ARTIFACT_NAME: ${{ inputs.ARTIFACT_NAME }}
             RSYNC_FILTER_FILE: ${{ inputs.RSYNC_FILTER_FILE }}
+            RUNS_ON: ${{ inputs.RUNS_ON }}
         secrets:
             SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
             SERVER_HOSTNAME: ${{ secrets.SERVER_HOSTNAME }}
