@@ -91,5 +91,5 @@ jobs:
             - uses: geekyeggo/delete-artifact@v5
               with:
                   failOnError: false
-                  name: 'compressed-code-artifact'
+                  name: ${{ inputs.ARTIFACT_NAME }}
                   useGlob: false

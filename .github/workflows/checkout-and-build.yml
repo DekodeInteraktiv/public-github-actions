@@ -129,13 +129,13 @@ jobs:
             - name: Create code artifact archive
               working-directory: ./
               run: |
-                  touch compressed-code-artifact.tar.gz
-                  tar -czf compressed-code-artifact.tar.gz --exclude=compressed-code-artifact.tar.gz --exclude=.git .
+                  touch ${{ inputs.ARTIFACT_NAME }}.tar.gz
+                  tar -czf ${{ inputs.ARTIFACT_NAME }}.tar.gz --exclude=${{ inputs.ARTIFACT_NAME }}.tar.gz --exclude=.git .
 
             - name: Upload Artifact
               uses: actions/upload-artifact@v4
               with:
-                name: compressed-code-artifact
-                path: compressed-code-artifact.tar.gz
+                name: ${{ inputs.ARTIFACT_NAME }}
+                path: ${{ inputs.ARTIFACT_NAME }}.tar.gz
                 retention-days: 1
                 overwrite: true
